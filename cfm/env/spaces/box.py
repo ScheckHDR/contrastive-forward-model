@@ -1,8 +1,8 @@
 import numpy as np
 
-from cfm.env.spaces.float_box import FloatBox
-from cfm.env.spaces.int_box import IntBox
-from cfm.env.spaces.base import Space
+from .float_box import FloatBox
+from .int_box import IntBox
+from .base import Space
 
 
 class Box(Space):

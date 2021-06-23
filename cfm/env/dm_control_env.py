@@ -6,9 +6,9 @@ import numpy as np
 import os
 import copy
 from collections import namedtuple, OrderedDict
-from cfm.env.utils import namedarraytuple, Env, EnvStep, EnvSpaces
-from cfm.env.spaces.box import Box
-from cfm.env.spaces.composite import Composite
+from .utils import namedarraytuple, Env, EnvStep, EnvSpaces
+from .spaces.box import Box
+from .spaces.composite import Composite
 
 State = None
 
@@ -139,7 +139,10 @@ class DMControlEnv(Env):
         global EnvInfo
         if EnvInfo is None:
             EnvInfo = namedtuple("EnvInfo", list(info.keys()))
-        info = EnvInfo(**{k: v for k, v in info.items() if k in EnvInfo._fields})
+        try:
+            info = EnvInfo(**{k: v for k, v in info.items() if k in EnvInfo._fields})
+        except:
+            info = EnvInfo(**{k: v for k, v in info.items() if k in EnvInfo._fields})
 
         global Observation
         if Observation is None:

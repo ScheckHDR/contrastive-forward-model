@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--end', type=int, default=-1)
     args = parser.parse_args()
 
-    exps = [{'root': ['data/rope'],
+    exps = [{'root': ['data/cloth'],
              'state-size': [8], 'chunk-size': [10], 'overshooting-distance': [10],
              'overshooting-kl-beta': [0], 'global-kl-beta': [0], 'trans_type': ['mlp'],
              'embedding-size': [512], 'hidden-size': [128]

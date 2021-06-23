@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, './cfm/baselines')
+
 import multiprocessing as mp
 import math
 import argparse
@@ -14,7 +17,7 @@ from torchvision import transforms
 
 from cfm.dataset import TrajectoryDataset
 from cfm.utils import save_np_images
-from cfm.env.dm_control_env import DMControlEnv
+
 from PIL import Image
 
 color_dim = None
@@ -234,6 +237,7 @@ def rotate_tensor(tensor):
 
 def compute_average_error(encoder, inv_model, fwd_model_linear, fwd_model_mlp, trans,
                           data_loader, env_args, n_actions, device, args):
+    from env.dm_control_env import DMControlEnv
     env = DMControlEnv(**env_args)
     o_flat = env.reset().pixels
     state_flat = env.get_state()
@@ -246,7 +250,7 @@ def compute_average_error(encoder, inv_model, fwd_model_linear, fwd_model_mlp, t
         with torch.no_grad():
             out, start, plan, true, traj = compute_single_trial(encoder, inv_model, fwd_model_linear, fwd_model_mlp, trans, data_loader,
                                                                 env, o_flat, state_flat, n_actions, device, args)
-            if t < 33: # Only keep 33 of them so ~100 images total
+            if t < 66: # Only keep 33 of them so ~100 images total
                 start_imgs.append(start)
                 plan_imgs.append(plan)
                 true_imgs.append(true)
@@ -276,16 +280,16 @@ def main(args):
 
     with open(join(args.folder, 'params.json')) as f:
         params = json.load(f)
-
     with open(join(params['root'], 'env_args.json'), 'r') as f:
         env_args = json.load(f)
-    env_args['max_path_length'] = 1200
+    env_args['max_path_length'] = 1500
     if 'task_kwargs' not in env_args:
         env_args['task_kwargs'] = {}
     env_args['task_kwargs']['init_flat'] = True
     env_args['task_kwargs']['random_pick'] = False
-
+    
     device = torch.device('cuda:0')
+
     checkpoint = torch.load(join(args.folder, 'checkpoint'), map_location=device)
     encoder = checkpoint['encoder']
     inv_model, fwd_model_linear, fwd_model_mlp, trans = None, None, None, None
@@ -304,11 +308,12 @@ def main(args):
     color_dim = 3
 
     data_loader = get_dataloader(params)
+    
     res, start_imgs, plan_imgs, true_imgs, trajectories = compute_average_error(encoder, inv_model,
                                                                                 fwd_model_linear, fwd_model_mlp, trans,
                                                                                 data_loader, env_args,
                                                                                 args.n_actions, device, args)
-
+    
     if id == 0:
         prefix = f'[action_type]_{args.action_type}_[goal_type]_{args.goal_type}'
         eval_folder = join(args.folder, 'eval', prefix)

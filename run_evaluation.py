@@ -1,13 +1,16 @@
 import itertools
 import torch
 import sys
+print('\n')
+print(sys.path)
+print('\n')
 import math
 import multiprocessing as mp
 import shlex
 import subprocess
 import os
 from cfm.utils import construct_variants, construct_run_command
-
+#from cfm.env.dm_control_env import DMControlEnv
 def worker(gpu_id, exps):
     env = os.environ.copy()
     env['CUDA_VISIBLE_DEVICES'] = str(gpu_id)

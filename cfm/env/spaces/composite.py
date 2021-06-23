@@ -1,6 +1,6 @@
 
 
-from cfm.env.spaces.base import Space
+from .base import Space
 
 
 class Composite(Space):

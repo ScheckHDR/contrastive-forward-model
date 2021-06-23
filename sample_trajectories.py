@@ -11,12 +11,13 @@ import imageio
 import multiprocessing as mp
 import sys
 
-from cfm.env.dm_control_env import DMControlEnv
+
 
 
 def worker(worker_id, start, end):
     np.random.seed(worker_id+1)
     # Initialize environment
+    from cfm.env.dm_control_env import DMControlEnv
     env = DMControlEnv(**env_args)
     if worker_id == 0:
         pbar = tqdm(total=end - start)

@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from cfm.env.spaces.base import Space
+from .base import Space
 
 
 class IntBox(Space):
